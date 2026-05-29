@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Script from 'next/script'
 import '../styles/globals.css'
 import ServiceWorkerRegister from './components/ServiceWorkerRegister'
+import { CommandPalette } from './components/CommandPalette'
 
 export const metadata: Metadata = {
     title: 'HSP Linkstash',
@@ -45,6 +46,7 @@ export default function RootLayout({
             </head>
             <body>
                 {children}
+                <CommandPalette />
                 <ServiceWorkerRegister />
                 <Script
                     id="sw-register"

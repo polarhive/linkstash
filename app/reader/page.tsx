@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeSanitize from 'rehype-sanitize';
 import { useRouter } from 'next/navigation';
+import { Sparkles } from 'lucide-react';
 import posthog from 'posthog-js';
 
 type SuggestedItem = {
@@ -34,6 +35,7 @@ export default function ReaderPage() {
     const [relatedItems, setRelatedItems] = useState<SuggestedItem[]>([]);
     const [relatedGroups, setRelatedGroups] = useState<SuggestedGroup[]>([]);
     const [relatedLoading, setRelatedLoading] = useState(false);
+    const [suggestionsExpanded, setSuggestionsExpanded] = useState(true);
     const [fontSize, setFontSize] = useState(16);
     const [fontFamily, setFontFamily] = useState('system-ui');
     const router = useRouter();
@@ -503,6 +505,15 @@ export default function ReaderPage() {
                             </div>
 
                             <div className="toolbar-group toolbar-group-end">
+                                <button
+                                    type="button"
+                                    className="toolbar-button"
+                                    onClick={() => setSuggestionsExpanded(!suggestionsExpanded)}
+                                    title={suggestionsExpanded ? 'Hide suggestions' : 'Show suggestions'}
+                                    aria-label={suggestionsExpanded ? 'Hide suggestions' : 'Show suggestions'}
+                                >
+                                    <Sparkles size={16} />
+                                </button>
                                 {currentMeta?.url && (
                                     <a href={currentMeta.url} target="_blank" rel="noopener noreferrer" className="toolbar-button" title="Open original">
                                         ↗
@@ -588,37 +599,41 @@ export default function ReaderPage() {
                         </div>
 
                         <aside className="reader-suggestions-side" aria-label="Suggested articles and groups">
-                            <div className="suggestion-section-title">Suggested Articles</div>
-                            {relatedLoading ? (
-                                <div className="suggestion-empty">Finding related links...</div>
-                            ) : relatedItems.length === 0 ? (
-                                <div className="suggestion-empty">No related links yet.</div>
-                            ) : (
-                                <ol className="suggestion-list">
-                                    {relatedItems.slice(0, 10).map((item) => (
-                                        <li key={item.id}>
-                                            <a href={`/reader/${encodeURIComponent(item.id)}`} className="suggestion-link">
-                                                <span className="suggestion-title">{item.title}</span>
-                                                <span className="suggestion-meta">{item.domain || 'unknown domain'} • {Math.round(item.score * 100)}%</span>
-                                            </a>
-                                        </li>
-                                    ))}
-                                </ol>
-                            )}
+                            {suggestionsExpanded ? (
+                                <>
+                                    <div className="suggestion-section-title">Suggested Articles</div>
+                                    {relatedLoading ? (
+                                        <div className="suggestion-empty">Finding related links...</div>
+                                    ) : relatedItems.length === 0 ? (
+                                        <div className="suggestion-empty">No related links yet.</div>
+                                    ) : (
+                                        <ol className="suggestion-list">
+                                            {relatedItems.slice(0, 10).map((item) => (
+                                                <li key={item.id}>
+                                                    <a href={`/reader/${encodeURIComponent(item.id)}`} className="suggestion-link">
+                                                        <span className="suggestion-title">{item.title}</span>
+                                                        <span className="suggestion-meta">{item.domain || 'unknown domain'} • {Math.round(item.score * 100)}%</span>
+                                                    </a>
+                                                </li>
+                                            ))}
+                                        </ol>
+                                    )}
 
-                            <div className="suggestion-section-title">Suggested Groups</div>
-                            {relatedGroups.length === 0 ? (
-                                <div className="suggestion-empty">No groups available.</div>
-                            ) : (
-                                <ul className="suggestion-group-list">
-                                    {relatedGroups.slice(0, 8).map((group) => (
-                                        <li key={group.name}>
-                                            <span>{group.name}</span>
-                                            <strong>{group.count}</strong>
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
+                                    <div className="suggestion-section-title">Suggested Groups</div>
+                                    {relatedGroups.length === 0 ? (
+                                        <div className="suggestion-empty">No groups available.</div>
+                                    ) : (
+                                        <ul className="suggestion-group-list">
+                                            {relatedGroups.slice(0, 8).map((group) => (
+                                                <li key={group.name}>
+                                                    <span>{group.name}</span>
+                                                    <strong>{group.count}</strong>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </>
+                            ) : null}
                         </aside>
                     </div>
                 </div>

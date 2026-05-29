@@ -26,8 +26,15 @@ export default function LinksClient(): JSX.Element {
     const { links, isLoading, isRefreshed, hasMore, loadMore } = usePaginatedLinks(rankMode);
     const router = useRouter();
 
-    // Load related links/suggestions based on the top link
+    // Load related links/suggestions based on the top link - only when expanded
     useEffect(() => {
+        if (!suggestionsExpanded) {
+            setSuggestedItems([]);
+            setSuggestedGroups([]);
+            setSuggestedSourceTitle('');
+            return;
+        }
+
         const topLink = links?.[0];
         if (!topLink?.id) {
             setSuggestedItems([]);
@@ -80,7 +87,7 @@ export default function LinksClient(): JSX.Element {
         return () => {
             cancelled = true;
         };
-    }, [links]);
+    }, [links, suggestionsExpanded]);
 
     // Group links by date for display
     const dateGroups = links ? groupItemsByDate(links) : [];
