@@ -45,33 +45,12 @@ function buildItemXml(link: {
   summary?: string;
   content?: string;
 }): string {
-  const descParts: string[] = [];
+  // Description is just the content or summary
+  const description = link.summary || '';
 
-  if (link.roomComment) {
-    descParts.push(`<strong>Room:</strong> ${escapeXml(link.roomComment)}`);
-  }
-
-  descParts.push(`<strong>Domain:</strong> ${escapeXml(link.domain)}`);
-  descParts.push(`<strong>Votes:</strong> ${link.count}`);
-
-  if (link.content) {
-    descParts.push(escapeXml(link.content));
-  } else if (link.summary) {
-    descParts.push(escapeXml(link.summary));
-  }
-
-  const description = descParts.join('<br/>\n');
-
-  const categories = (link.tags || [])
-    .map(t => `      <category>${escapeXml(t)}</category>`)
-    .join('\n');
-
-  const roomCategory = link.roomComment
-    ? `\n      <category>${escapeXml(link.roomComment)}</category>`
-    : '';
-
-  const author = link.submittedBy
-    ? `\n      <author>${escapeXml(link.submittedBy)}</author>`
+  // Author is the room name
+  const author = link.roomComment
+    ? `\n      <author>${escapeXml(link.roomComment)}</author>`
     : '';
 
   return `    <item>
@@ -79,7 +58,7 @@ function buildItemXml(link: {
       <link>${escapeXml(link.url)}</link>
       <pubDate>${formatRssDate(link.ts)}</pubDate>${author}
       <guid>${escapeXml(link.id)}</guid>
-      <description>${description}</description>${categories}${roomCategory}
+      <description>${escapeXml(description)}</description>
     </item>`;
 }
 
