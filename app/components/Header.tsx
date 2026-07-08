@@ -5,7 +5,7 @@
 'use client';
 
 import React, { JSX } from 'react';
-import { Github, BookOpen, Filter, Sparkles } from 'lucide-react';
+import { ExternalLink, BookOpen, Filter, Sparkles } from 'lucide-react';
 import posthog from 'posthog-js';
 import type { RankMode, Link } from '../../lib/types';
 
@@ -103,7 +103,7 @@ export function Header({
                     aria-label="GitHub repository"
                     onClick={() => posthog.capture('github_link_clicked')}
                 >
-                    <Github size={18} aria-hidden="true" />
+                    <ExternalLink size={18} aria-hidden="true" />
                 </a>
             </div>
         </div>
